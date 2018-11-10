@@ -41,30 +41,39 @@ class App extends Component {
 
     return (
       <div className="App">
-        <form>
-          <input type="text" onChange={this.onSearchChange} />
-        </form>
-        {list.filter(isSearched(searchTerm)).map(item => (
-          <div key={item.objectID}>
-            <span>
-              <a href={item.url}>{item.title}</a>
-            </span>
-            <span>{item.author}</span>
-            <span>{item.num_comments}</span>
-            <span>{item.points}</span>
-            <span>
-              <button
-                onClick={() => this.onDismiss(item.objectID)}
-                type="button"
-              >
-                Dismiss
-              </button>
-            </span>
-          </div>
-        ))}
+        <Search value={searchTerm} onChange={this.onSearchChange}>
+          Search{" "}
+        </Search>
+        <Table list={list} pattern={searchTerm} onDismiss={this.onDismiss} />
       </div>
     );
   }
 }
+
+const Search = ({ value, onChange, children }) => (
+  <form>
+    {children} <input type="text" value={value} onChange={onChange} />
+  </form>
+);
+
+const Table = ({ list, pattern, onDismiss }) => (
+  <div>
+    {list.filter(isSearched(pattern)).map(item => (
+      <div key={item.objectID}>
+        <span>
+          <a href={item.url}>{item.title}</a>
+        </span>
+        <span>{item.author}</span>
+        <span>{item.num_comments}</span>
+        <span>{item.points}</span>
+        <span>
+          <button onClick={() => onDismiss(item.objectID)} type="button">
+            Dismiss
+          </button>
+        </span>
+      </div>
+    ))}
+  </div>
+);
 
 export default App;
