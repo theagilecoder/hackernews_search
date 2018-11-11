@@ -9,16 +9,19 @@ const DEFAULT_QUERY = "redux";
 
 class App extends Component {
   state = {
-    result: null,
+    results: null,
+    searchKey: "",
     searchTerm: DEFAULT_QUERY
   };
 
   // Dsimiss button
   onDismiss = id => {
-    const updatedHits = this.state.result.hits.filter(
-      item => item.objectID !== id
-    );
-    this.setState({ result: { ...this.state.result, hits: updatedHits } });
+    const { searchKey, results } = this.state;
+    const { hits, page } = results[searchKey];
+    const updatedHits = hits.filter(item => item.objectID !== id);
+    this.setState({
+      results: { ...results, [searchKey]: { hits: updatedHits, page } }
+    });
   };
 
   // onChange function for Search box
@@ -29,10 +32,12 @@ class App extends Component {
   // Can remove this later...
   setSearchTopStories = result => {
     const { hits, page } = result;
-    const oldHits = page !== 0 ? this.state.result.hits : [];
+    const { searchKey, results } = this.state;
+    const oldHits =
+      results && results[searchKey] ? results[searchKey].hits : [];
     const updatedHits = [...oldHits, ...hits];
     this.setState({
-      result: { hits: updatedHits, page }
+      results: { ...results, [searchKey]: { hits: updatedHits, page } }
     });
   };
 
@@ -49,19 +54,30 @@ class App extends Component {
   // Call after mounting
   componentDidMount() {
     const { searchTerm } = this.state;
+    this.setState({ searchKey: searchTerm });
     this.fetchSearchTopStories(searchTerm); //First API call
   }
+
+  needsToSearchTopStories = searchTerm => {
+    return !this.state.results[searchTerm];
+  };
 
   // On Submitting a search...
   onSearchSubmit = event => {
     const { searchTerm } = this.state;
-    this.fetchSearchTopStories(searchTerm); //API call on search submit
+    this.setState({ searchKey: searchTerm });
+    if (this.needsToSearchTopStories(searchTerm)) {
+      this.fetchSearchTopStories(searchTerm);
+    }
     event.preventDefault();
   };
 
   render() {
-    const { searchTerm, result } = this.state;
-    const page = (result && result.page) || 0;
+    const { searchTerm, results, searchKey } = this.state;
+    const page =
+      (results && results[searchKey] && results[searchKey].page) || 0;
+    const list =
+      (results && results[searchKey] && results[searchKey].hits) || [];
 
     return (
       <div className="page">
@@ -74,10 +90,10 @@ class App extends Component {
             Search{" "}
           </Search>
         </div>
-        {result && <Table list={result.hits} onDismiss={this.onDismiss} />}
+        <Table list={list} onDismiss={this.onDismiss} />
         <div className="interactions">
           <button
-            onClick={() => this.fetchSearchTopStories(searchTerm, page + 1)}
+            onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}
           >
             More
           </button>
