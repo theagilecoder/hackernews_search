@@ -142,3 +142,5 @@ const Table = ({ list, onDismiss }) => (
 );
 
 export default App;
+
+export { Search, Table };
