@@ -4,6 +4,7 @@ import "./App.css";
 const PATH_BASE = "https://hn.algolia.com/api/v1";
 const PATH_SEARCH = "/search";
 const PARAM_SEARCH = "query=";
+const PARAM_PAGE = "page=";
 const DEFAULT_QUERY = "redux";
 
 class App extends Component {
@@ -27,12 +28,19 @@ class App extends Component {
 
   // Can remove this later...
   setSearchTopStories = result => {
-    this.setState({ result });
+    const { hits, page } = result;
+    const oldHits = page !== 0 ? this.state.result.hits : [];
+    const updatedHits = [...oldHits, ...hits];
+    this.setState({
+      result: { hits: updatedHits, page }
+    });
   };
 
   // call API on mount and on submitting search
-  fetchSearchTopStories = searchTerm => {
-    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
+  fetchSearchTopStories = (searchTerm, page = 0) => {
+    fetch(
+      `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}`
+    )
       .then(response => response.json())
       .then(result => this.setSearchTopStories(result))
       .catch(error => error);
@@ -41,18 +49,19 @@ class App extends Component {
   // Call after mounting
   componentDidMount() {
     const { searchTerm } = this.state;
-    this.fetchSearchTopStories(searchTerm);
+    this.fetchSearchTopStories(searchTerm); //First API call
   }
 
   // On Submitting a search...
   onSearchSubmit = event => {
     const { searchTerm } = this.state;
-    this.fetchSearchTopStories(searchTerm);
+    this.fetchSearchTopStories(searchTerm); //API call on search submit
     event.preventDefault();
   };
 
   render() {
     const { searchTerm, result } = this.state;
+    const page = (result && result.page) || 0;
 
     return (
       <div className="page">
@@ -66,6 +75,13 @@ class App extends Component {
           </Search>
         </div>
         {result && <Table list={result.hits} onDismiss={this.onDismiss} />}
+        <div className="interactions">
+          <button
+            onClick={() => this.fetchSearchTopStories(searchTerm, page + 1)}
+          >
+            More
+          </button>
+        </div>
       </div>
     );
   }
