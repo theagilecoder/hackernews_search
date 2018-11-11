@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from "axios";
 import "./App.css";
 
 const PATH_BASE = "https://hn.algolia.com/api/v1";
@@ -44,11 +45,10 @@ class App extends Component {
 
   // call API on mount and on submitting search
   fetchSearchTopStories = (searchTerm, page = 0) => {
-    fetch(
+    axios(
       `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}`
     )
-      .then(response => response.json())
-      .then(result => this.setSearchTopStories(result))
+      .then(result => this.setSearchTopStories(result.data))
       .catch(error => this.setState({ error }));
   };
 
