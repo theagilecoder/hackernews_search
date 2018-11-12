@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { sortBy } from "lodash";
 import "./App.css";
 
 const PATH_BASE = "https://hn.algolia.com/api/v1";
@@ -9,13 +10,33 @@ const PARAM_PAGE = "page=";
 const DEFAULT_QUERY = "redux";
 const Loading = () => <div>Loading ...</div>;
 
+const SORTS = {
+  NONE: list => list,
+  TITLE: list => sortBy(list, "title"),
+  AUTHOR: list => sortBy(list, "author"),
+  COMMENTS: list => sortBy(list, "num_comments").reverse(),
+  POINTS: list => sortBy(list, "points").reverse()
+};
+
+const Sort = ({ sortKey, onSort, children }) => (
+  <button onClick={() => onSort(sortKey)} className="button-inline">
+    {children}
+  </button>
+);
+
 class App extends Component {
   state = {
     results: null,
     searchKey: "",
     searchTerm: DEFAULT_QUERY,
     error: null,
-    isLoading: false
+    isLoading: false,
+    sortKey: "NONE"
+  };
+
+  // Sorting
+  onSort = sortKey => {
+    this.setState({ sortKey });
   };
 
   // Dsimiss button
@@ -78,7 +99,14 @@ class App extends Component {
   };
 
   render() {
-    const { searchTerm, results, searchKey, error, isLoading } = this.state;
+    const {
+      searchTerm,
+      results,
+      searchKey,
+      error,
+      isLoading,
+      sortKey
+    } = this.state;
     const page =
       (results && results[searchKey] && results[searchKey].page) || 0;
     const list =
@@ -100,7 +128,12 @@ class App extends Component {
             <p>Something went wrong.</p>
           </div>
         ) : (
-          <Table list={list} onDismiss={this.onDismiss} />
+          <Table
+            list={list}
+            sortKey={sortKey}
+            onSort={this.onSort}
+            onDismiss={this.onDismiss}
+          />
         )}
         <div className="interactions">
           {isLoading ? (
@@ -140,9 +173,32 @@ class Search extends Component {
   }
 }
 
-const Table = ({ list, onDismiss }) => (
+const Table = ({ list, sortKey, onSort, onDismiss }) => (
   <div className="table">
-    {list.map(item => (
+    <div className="table-header">
+      <span style={{ width: "40%" }}>
+        <Sort sortKey={"TITLE"} onSort={onSort}>
+          Title
+        </Sort>
+      </span>
+      <span style={{ width: "30%" }}>
+        <Sort sortKey={"AUTHOR"} onSort={onSort}>
+          Author
+        </Sort>
+      </span>
+      <span style={{ width: "10%" }}>
+        <Sort sortKey={"COMMENTS"} onSort={onSort}>
+          Comments
+        </Sort>
+      </span>
+      <span style={{ width: "10%" }}>
+        <Sort sortKey={"POINTS"} onSort={onSort}>
+          Points
+        </Sort>
+      </span>
+      <span style={{ width: "10%" }}>Archive</span>
+    </div>
+    {SORTS[sortKey](list).map(item => (
       <div key={item.objectID} className="table-row">
         <span style={{ width: "40%" }}>
           <a href={item.url}>{item.title}</a>
