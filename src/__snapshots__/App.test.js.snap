@@ -25,7 +25,77 @@ exports[`App has a valid snapshot 1`] = `
   </div>
   <div
     className="table"
-  />
+  >
+    <div
+      className="table-header"
+    >
+      <span
+        style={
+          Object {
+            "width": "40%",
+          }
+        }
+      >
+        <button
+          className="button-inline"
+          onClick={[Function]}
+        >
+          Title
+        </button>
+      </span>
+      <span
+        style={
+          Object {
+            "width": "30%",
+          }
+        }
+      >
+        <button
+          className="button-inline"
+          onClick={[Function]}
+        >
+          Author
+        </button>
+      </span>
+      <span
+        style={
+          Object {
+            "width": "10%",
+          }
+        }
+      >
+        <button
+          className="button-inline"
+          onClick={[Function]}
+        >
+          Comments
+        </button>
+      </span>
+      <span
+        style={
+          Object {
+            "width": "10%",
+          }
+        }
+      >
+        <button
+          className="button-inline"
+          onClick={[Function]}
+        >
+          Points
+        </button>
+      </span>
+      <span
+        style={
+          Object {
+            "width": "10%",
+          }
+        }
+      >
+        Archive
+      </span>
+    </div>
+  </div>
   <div
     className="interactions"
   >
@@ -53,6 +123,75 @@ exports[`Table has a valid snapshot 1`] = `
 <div
   className="table"
 >
+  <div
+    className="table-header"
+  >
+    <span
+      style={
+        Object {
+          "width": "40%",
+        }
+      }
+    >
+      <button
+        className="button-inline button-active"
+        onClick={[Function]}
+      >
+        Title
+      </button>
+    </span>
+    <span
+      style={
+        Object {
+          "width": "30%",
+        }
+      }
+    >
+      <button
+        className="button-inline"
+        onClick={[Function]}
+      >
+        Author
+      </button>
+    </span>
+    <span
+      style={
+        Object {
+          "width": "10%",
+        }
+      }
+    >
+      <button
+        className="button-inline"
+        onClick={[Function]}
+      >
+        Comments
+      </button>
+    </span>
+    <span
+      style={
+        Object {
+          "width": "10%",
+        }
+      }
+    >
+      <button
+        className="button-inline"
+        onClick={[Function]}
+      >
+        Points
+      </button>
+    </span>
+    <span
+      style={
+        Object {
+          "width": "10%",
+        }
+      }
+    >
+      Archive
+    </span>
+  </div>
   <div
     className="table-row"
   >
